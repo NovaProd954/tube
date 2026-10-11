@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f0f0f" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Tube">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon.svg">
+<link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<title>Tube</title>
+<script>(function(){var r=document.documentElement,m=matchMedia('(prefers-color-scheme:dark)');window.setGlass=function(l){r.classList.toggle('glass-lite',l===1);r.classList.toggle('glass-off',l>=2)};var g=localStorage.getItem('glass')||'auto',l=+localStorage.getItem('glasslvl')||0,n=navigator;if(g==='off')l=2;else if(g==='on')l=0;else if(!l&&((n.deviceMemory&&n.deviceMemory<=2)||(n.hardwareConcurrency&&n.hardwareConcurrency<=2)||(n.connection&&n.connection.saveData)))l=1;setGlass(l);window.applyTheme=function(){var s=localStorage.getItem('theme')||'auto';r.dataset.theme=s==='dark'||(s==='auto'&&m.matches)?'dark':'light'};applyTheme();m.addEventListener('change',applyTheme);if(/preview/.test(location.search)||innerWidth>600)r.classList.add('frame')})()</script>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-home" viewBox="0 0 24 24"><path style="fill:var(--bf,none)" d="M4.5 10.2 12 3.6l7.5 6.6v10.2h-5v-6.1h-5v6.1h-5z"/></symbol>
+<symbol id="i-shorts" viewBox="0 0 24 24"><rect style="fill:var(--bf,none)" x="6.2" y="2.8" width="11.6" height="18.4" rx="3.6"/><path style="fill:var(--cf,none);stroke:var(--cs,currentColor)" d="m10.2 8.9 4.6 3.1-4.6 3.1z"/></symbol>
+<symbol id="i-subs" viewBox="0 0 24 24"><rect style="fill:var(--bf,none)" x="3.2" y="7.8" width="17.6" height="12.4" rx="3"/><path d="M6.8 4.4h10.4"/><path style="fill:var(--cf,none);stroke:var(--cs,currentColor)" d="m10.3 11.7 4.4 2.4-4.4 2.4z"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.4"/><path d="M12 7.6v8.8M7.6 12h8.8"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.6 15.6 4.4 4.4"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 1.5h-15z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/></symbol>
+<symbol id="i-cast" viewBox="0 0 24 24"><path d="M3.5 8V6.5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H14"/><path d="M3.5 12.2a7 7 0 0 1 7 7M3.5 16a3.2 3.2 0 0 1 3.2 3.2"/></symbol>
+<symbol id="i-like" viewBox="0 0 24 24"><path d="M7.5 20H5a1.5 1.5 0 0 1-1.5-1.5v-7A1.5 1.5 0 0 1 5 10h2.5zM7.5 10l3.2-6.2A1.8 1.8 0 0 1 14 5v3.5h4.6a1.8 1.8 0 0 1 1.8 2.1l-1.2 7.2a2 2 0 0 1-2 1.7H7.5"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24"><path d="M14.5 4.5 21 10.8l-6.5 6.3v-3.6c-5 0-8.3 1.4-11 5 .6-5.8 4-9.3 11-9.6z"/></symbol>
+<symbol id="i-dl" viewBox="0 0 24 24"><path d="M12 4v11M7.5 11 12 15.5l4.5-4.5M5 19.5h14"/></symbol>
+<symbol id="i-save" viewBox="0 0 24 24"><path d="M6.5 4h11v16.5L12 16.5l-5.5 4z"/></symbol>
+<symbol id="i-morev" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><circle cx="12" cy="5.5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="18.5" r="1.8"/></g></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M8 5.3v13.4a.6.6 0 0 0 .9.5l10.8-6.7a.6.6 0 0 0 0-1L8.9 4.8a.6.6 0 0 0-.9.5z"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><rect x="6.2" y="4.8" width="4" height="14.4" rx="1.3"/><rect x="13.8" y="4.8" width="4" height="14.4" rx="1.3"/></g></symbol>
+<symbol id="i-prev" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M6 5h2v14H6zM19 5.6v12.8a.5.5 0 0 1-.8.4L9.4 12.4a.5.5 0 0 1 0-.8l8.8-6.4a.5.5 0 0 1 .8.4z"/></symbol>
+<symbol id="i-next" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M16 5h2v14h-2zM5 5.6v12.8a.5.5 0 0 0 .8.4l8.8-6.4a.5.5 0 0 0 0-.8L5.8 5.2a.5.5 0 0 0-.8.4z"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+<symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"/></symbol>
+<symbol id="i-right" viewBox="0 0 24 24"><path d="m9.5 6 6 6-6 6"/></symbol>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M20 12H5M11 5.5 4.5 12l6.5 6.5"/></symbol>
+<symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M17 17 7 7M7 15V7h8"/></symbol>
+<symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.6 8.4-2.2 5-5 2.2 2.2-5z"/></symbol>
+<symbol id="i-cmt" viewBox="0 0 24 24"><path d="M20 11.5c0 3.9-3.6 7-8 7-1 0-2-.2-2.9-.5L5 19.5l1.2-3.4C4.8 15 4 13.3 4 11.5c0-3.9 3.6-7 8-7s8 3.1 8 7z"/></symbol>
+<symbol id="i-remix" viewBox="0 0 24 24"><path d="M17 3l3.5 3.5L17 10M3.5 12v-1.5a4 4 0 0 1 4-4h13M7 21l-3.5-3.5L7 14M20.5 12v1.5a4 4 0 0 1-4 4h-13"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+<symbol id="i-queue" viewBox="0 0 24 24"><path d="M4 7h12M4 12h12M4 17h7M17 14v6M14 17h6"/></symbol>
+<symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/></symbol>
+<symbol id="i-xc" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.6 8.6l6.8 6.8M15.4 8.6l-6.8 6.8"/></symbol>
+<symbol id="i-flag" viewBox="0 0 24 24"><path d="M5.5 21V4M5.5 4.5h12l-2 4 2 4h-12"/></symbol>
+<symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 20V8M7.5 12 12 7.5l4.5 4.5M5 4.5h14"/></symbol>
+<symbol id="i-live" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.2"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4M4.8 4.8a10.2 10.2 0 0 0 0 14.4M19.2 4.8a10.2 10.2 0 0 1 0 14.4"/></symbol>
+<symbol id="i-post" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></symbol>
+<symbol id="i-full" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+<symbol id="i-cc" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10.5 10.5a2 2 0 1 0 0 3M16.5 10.5a2 2 0 1 0 0 3"/></symbol>
+<symbol id="i-set" viewBox="0 0 24 24"><path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></symbol>
+<symbol id="i-vid" viewBox="0 0 24 24"><rect x="3.5" y="6" width="13" height="12" rx="2.5"/><path d="m16.5 10.5 4-2.2v7.4l-4-2.2"/></symbol>
+<symbol id="i-time" viewBox="0 0 24 24"><path d="M5 20V9M12 20V4M19 20v-7"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.4 2.3c-.7.3-1 .8-1 1.6M12 16.8v.1"/></symbol>
+<symbol id="i-pip" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><rect x="12" y="11" width="7" height="5.5" rx="1.2" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+</defs></svg>
+
+<div id="app">
+<div class="sb"><span class="tm">9:41</span><i class="isl"></i><span class="st"><svg viewBox="0 0 18 12" style="width:18px;height:12px"><g fill="currentColor" stroke="none"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></g></svg><svg viewBox="0 0 26 12" style="width:26px;height:12px"><rect x=".5" y=".5" width="22" height="11" rx="3.5" opacity=".4" stroke-width="1"/><rect x="2" y="2" width="19" height="8" rx="2.2" fill="currentColor" stroke="none"/><path d="M24 4v4" opacity=".5" stroke-width="1.4"/></svg></span></div>
+
+<section class="view active" id="v-home">
+<header class="hd gl flat" id="hd-home"><div class="bar"><div class="logo"><svg viewBox="0 0 28 20" style="width:29px;height:20px"><rect width="28" height="20" rx="5.6" fill="#f00" stroke="none"/><path d="m11.4 5.8 6.4 4.2-6.4 4.2z" fill="#fff" stroke="none"/></svg><b>Tube</b></div><div class="ra"><button class="ib" data-act="toast" data-m="No cast devices found" aria-label="Cast"><svg><use href="#i-cast"/></svg></button><button class="ib" data-act="toast" data-m="No new notifications" aria-label="Notifications"><svg><use href="#i-bell"/></svg><i class="bdg">9+</i></button><button class="ib" data-act="srch" aria-label="Search"><svg><use href="#i-search"/></svg></button></div></div><div class="chips" id="chips"></div></header>
+<div class="sc" id="sc-home" style="--pt:92px"><div id="feed"></div><div id="sent"></div></div>
+</section>
+
+<section class="view" id="v-shorts"><div class="snap" id="snap"></div><div class="stop"><button class="ib" data-act="srch" aria-label="Search"><svg><use href="#i-search"/></svg></button><button class="ib" data-act="menu" aria-label="More"><svg><use href="#i-morev"/></svg></button></div></section>
+
+<section class="view" id="v-subs">
+<header class="hd gl flat" id="hd-subs"><div class="bar"><div class="logo"><svg viewBox="0 0 28 20" style="width:29px;height:20px"><rect width="28" height="20" rx="5.6" fill="#f00" stroke="none"/><path d="m11.4 5.8 6.4 4.2-6.4 4.2z" fill="#fff" stroke="none"/></svg><b>Tube</b></div><div class="ra"><button class="ib" data-act="toast" data-m="No cast devices found" aria-label="Cast"><svg><use href="#i-cast"/></svg></button><button class="ib" data-act="toast" data-m="No new notifications" aria-label="Notifications"><svg><use href="#i-bell"/></svg><i class="bdg">9+</i></button><button class="ib" data-act="srch" aria-label="Search"><svg><use href="#i-search"/></svg></button></div></div></header>
+<div class="sc" id="sc-subs" style="--pt:44px"><div class="chan" id="chan"></div><div class="chips sub" id="schips"></div><div id="subfeed"></div></div>
+</section>
+
+<section class="view" id="v-you">
+<header class="hd gl flat" id="hd-you"><div class="bar"><div class="ra" style="margin-left:auto"><button class="ib" data-act="toast" data-m="No cast devices found" aria-label="Cast"><svg><use href="#i-cast"/></svg></button><button class="ib" data-act="toast" data-m="No new notifications" aria-label="Notifications"><svg><use href="#i-bell"/></svg></button><button class="ib" data-act="srch" aria-label="Search"><svg><use href="#i-search"/></svg></button><button class="ib" data-act="toast" data-m="Settings" aria-label="Settings"><svg><use href="#i-set"/></svg></button></div></div></header>
+<div class="sc" id="sc-you" style="--pt:44px">
+<div class="prof"><div class="av xl" style="background:hsl(25 85% 52%)">Y</div><div><h2>Your Name</h2><p>@yourhandle · View channel ›</p></div></div>
+<div class="pills"><button class="pill" data-act="toast" data-m="Switch account">Switch account</button><button class="pill" data-act="toast" data-m="Opening account">Google Account</button><button class="pill" data-act="toast" data-m="Incognito is on">Turn on Incognito</button></div>
+<div class="sech"><h2>History</h2><button class="pill sm" data-act="toast" data-m="Opening history">View all</button></div><div class="row" id="hist"></div>
+<div class="sech"><h2>Playlists</h2><div class="rb2"><button class="pill sm" data-act="toast" data-m="Sorted by recently added">Recently added</button><button class="pill sm" data-act="toast" data-m="Opening playlists">View all</button></div></div><div class="row" id="pls"></div>
+<div class="lis"><button class="li" data-act="olist" data-l="hist"><svg><use href="#i-clock"/></svg><span>Watch history</span><em id="n-hist"></em></button><button class="li" data-act="olist" data-l="later"><svg><use href="#i-queue"/></svg><span>Watch later</span><em id="n-later"></em></button><button class="li" data-act="olist" data-l="liked"><svg><use href="#i-like"/></svg><span>Liked videos</span><em id="n-liked"></em></button></div>
+<div class="lis"><button class="li" data-act="engsheet"><svg><use href="#i-live"/></svg><span>Engine<small id="set-eng">Connecting...</small></span><svg class="chev"><use href="#i-right"/></svg></button><button class="li" data-act="qsheet"><svg><use href="#i-vid"/></svg><span>Default quality</span><em id="set-q"></em></button><div class="li"><svg><use href="#i-flag"/></svg><span>SponsorBlock<small>Skip sponsors, self promotion and interaction reminders</small></span><button class="sw" data-act="ptog" data-k="sb" aria-label="SponsorBlock"></button></div><div class="li"><svg><use href="#i-like"/></svg><span>Return YouTube Dislike<small>Show the dislike count</small></span><button class="sw" data-act="ptog" data-k="ryd" aria-label="Dislike count"></button></div><div class="li"><svg><use href="#i-play"/></svg><span>Autoplay next video</span><button class="sw" data-act="ptog" data-k="auto" aria-label="Autoplay"></button></div></div>
+<div class="lis"><div class="li"><svg><use href="#i-set"/></svg><span>Appearance</span><div class="seg" id="seg"><button data-act="seg" data-v="auto">Device</button><button data-act="seg" data-v="light">Light</button><button data-act="seg" data-v="dark">Dark</button></div></div><div class="li"><svg><use href="#i-set"/></svg><span>Glass effects</span><div class="seg" id="gseg"><button data-act="gseg" data-v="auto">Auto</button><button data-act="gseg" data-v="on">On</button><button data-act="gseg" data-v="off">Off</button></div></div></div>
+<div class="lis"><button class="li" data-act="impsubs"><svg><use href="#i-upload"/></svg><span>Import subscriptions<small>NewPipe export (.json) or YouTube Takeout (.csv)</small></span></button><button class="li" data-act="expsubs"><svg><use href="#i-dl"/></svg><span>Export subscriptions</span></button><button class="li" data-act="clrhist"><svg><use href="#i-xc"/></svg><span>Clear watch history</span></button></div>
+</div>
+</section>
+
+<div class="ov" id="srch"><div class="stp gl flat"><button class="ib" data-act="sback" aria-label="Back"><svg><use href="#i-back"/></svg></button><div class="sf"><input id="q" type="search" placeholder="Search Tube" enterkeyhint="search" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="ib sm" data-act="sclr" id="qx" aria-label="Clear"><svg><use href="#i-x"/></svg></button></div><button class="ib mic" data-act="toast" data-m="Microphone unavailable" aria-label="Voice search"><svg><use href="#i-mic"/></svg></button></div><div class="sc2" id="sres"></div></div>
+
+<div class="ov" id="pg"><div class="stp gl flat"><button class="ib" data-act="pgback" aria-label="Back"><svg><use href="#i-back"/></svg></button><b class="pgt" id="pgt"></b></div><div class="sc2" id="pgc"></div></div>
+
+<div class="mini gl" id="mini" data-act="mopen"><i class="mp"><i id="mfill" class="fill"></i></i><div class="mth" id="mth"></div><div class="mi"><b id="mti"></b><span id="mch"></span></div><button class="ib" data-act="mpp" data-pp aria-label="Play or pause"><svg><use href="#i-play"/></svg></button><button class="ib" data-act="mclose" aria-label="Close"><svg><use href="#i-x"/></svg></button></div>
+
+<nav class="tabs gl" id="tabs"><i class="lens" id="lens"></i>
+<button class="tb on" data-act="tab" data-t="home"><svg><use href="#i-home"/></svg><span>Home</span></button>
+<button class="tb" data-act="tab" data-t="shorts"><svg><use href="#i-shorts"/></svg><span>Shorts</span></button>
+<button class="tb mk" data-act="create" aria-label="Create"><svg><use href="#i-plus"/></svg></button>
+<button class="tb" data-act="tab" data-t="subs"><svg><use href="#i-subs"/></svg><span>Subscriptions</span></button>
+<button class="tb" data-act="tab" data-t="you"><i class="tav">Y</i><span>You</span></button>
+</nav>
+
+<div class="sheet" id="sheet">
+<div class="vwrap" id="vwrap"><div class="vid" id="vid"><video id="vel" playsinline webkit-playsinline preload="auto"></video><i class="dtap l" id="dtl">-10s</i><i class="dtap r" id="dtr">+10s</i><div class="vui"><i class="vdim"></i><div class="vtop"><button class="gb gl" data-act="min" aria-label="Minimize"><svg><use href="#i-down"/></svg></button><div class="vt2"><button class="gb gl" data-act="pip" aria-label="Picture in picture"><svg><use href="#i-pip"/></svg></button><button class="gb gl" data-act="subsheet" aria-label="Captions"><svg><use href="#i-cc"/></svg></button><button class="gb gl" data-act="vset" aria-label="Player settings"><svg><use href="#i-set"/></svg></button></div></div>
+<div class="vmid"><button class="gb gl" data-act="vprev" aria-label="Previous"><svg><use href="#i-prev"/></svg></button><button class="gb pp gl" data-act="pp" data-pp aria-label="Play or pause"><svg><use href="#i-pause"/></svg></button><button class="gb gl" data-act="vnext" aria-label="Next"><svg><use href="#i-next"/></svg></button></div>
+<div class="vbot"><span id="vtime">0:00 / 0:00</span><button class="gb sm gl" data-act="toast" data-m="Fullscreen unavailable" aria-label="Fullscreen"><svg><use href="#i-full"/></svg></button><div class="trk" id="trk" data-act="seek"><i class="bar2"><i id="bufb" class="bufb"></i><i id="fill" class="fill"></i><i class="sbms" id="sbms"></i></i><i class="knob" id="knob"></i></div></div></div></div></div>
+<div class="sbody" id="sbody">
+<div class="info"><h1 id="vti"></h1><p class="st2" id="vst"></p></div>
+<div class="chrow"><button class="chlink" data-act="vchopen"><div class="av" id="vav"></div><div class="chn"><b id="vch"></b><span id="vsubs"></span></div></button><button class="subb" id="subb" data-act="sub">Subscribe</button></div>
+<div class="acts"><div class="pill split"><button data-act="like" id="blike"><svg><use href="#i-like"/></svg><span id="lk">48K</span></button><i></i><button data-act="dis" id="bdis" aria-label="Dislike"><svg class="flip"><use href="#i-like"/></svg><span id="dk"></span></button></div><button class="pill" data-act="toast" data-m="Link copied"><svg><use href="#i-share"/></svg>Share</button><button class="pill" data-act="toast" data-m="Download started"><svg><use href="#i-dl"/></svg>Download</button><button class="pill" data-act="toast" data-m="Saved to Watch later"><svg><use href="#i-save"/></svg>Save</button></div>
+<div class="box" id="vdesc" data-act="desc"><b id="vdhd">Description</b><p id="vdtx"></p></div>
+<div class="box cbox" data-act="cmt"><b>Comments <span id="cmn"></span></b><div class="c1"><p id="cm1">Tap to load comments</p></div></div>
+<div id="rel"></div>
+</div></div>
+<div class="scrim" id="scrim" data-act="ccl"></div>
+<div class="asheet gl" id="as"><div class="grab"></div><div id="asl"></div></div>
+<div class="csheet gl" id="cs"><div class="grab"></div><div class="chd"><b>Comments <span id="cmn2"></span></b><button class="ib" data-act="ccl" aria-label="Close"><svg><use href="#i-x"/></svg></button></div><div class="cch"><button class="chip on">Top</button><button class="chip">Newest</button></div><div class="clist" id="clist"></div></div>
+<div class="toast gl" id="toast"></div>
+<audio id="ael" preload="auto"></audio>
+<input type="file" id="imp" accept=".json,.csv,application/json,text/csv" hidden>
+</div>
+<script src="data.js"></script>
+<script src="art.js"></script>
+<script src="engine.js"></script>
+<script src="store.js"></script>
+<script src="player.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
