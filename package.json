@@ -1,0 +1,19 @@
+{
+  "name": "tube",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/engine-local.js --bundle --format=iife --global-name=TubeLocal --platform=browser --target=es2020 --minify --outfile=tube/engine-local.js",
+    "sync": "npm run build && cap sync android",
+    "test:engine": "python3 engine/tests/test_engine.py"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/cli": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
+    "esbuild": "^0.28.2",
+    "youtubei.js": "^18.1.0"
+  }
+}

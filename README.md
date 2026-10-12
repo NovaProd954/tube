@@ -1,22 +1,41 @@
 # Tube
 
-Mobile web app with the real YouTube layout, iOS style glass and a built in ad free engine layer.
+Mobile app with the real YouTube layout, iOS style glass components and its own ad free engine.
 
-- `tube/` the app (static files, no build step). Serve over HTTPS, then Add to Home Screen.
-- `engine/` Tube Engine, a local yt-dlp powered server with a Piped compatible API.
+## Engine (automatic, nothing to run)
 
-Open `tube/index.html?preview` on a desktop browser for the phone frame.
+Tube picks its engine by itself, in this order:
 
-## Engines
+1. **On-device engine** in the Android app. youtubei.js (InnerTube client) runs inside the app and talks to YouTube over the phone's own native HTTP stack, which avoids browser CORS limits and uses your own IP, the same model NewPipe uses. Source in `src/engine-local.js`.
+2. **Piped instances** (NewPipe Extractor based) with automatic failover. This is what the Vercel web build uses, because a normal browser tab cannot call YouTube directly.
+3. **Demo mode** with offline sample data when nothing is reachable.
 
-Automatic mode tries, in order: a local Tube Engine on 127.0.0.1:8787, public Piped instances (NewPipe Extractor based, with failover), then demo mode with offline sample data. Custom server URLs work for any Tube Engine or Piped API.
+`engine/` is an optional yt-dlp server for advanced setups (custom server URL in You > Settings > Engine). It is not needed.
+
+## Get the Android app
+
+Every push to `main` builds a debug APK with GitHub Actions. Open the repo's Releases page, download `Tube.apk` from the `apk-latest` release and install it. Or run the "Build Android APK" workflow manually.
+
+## Web build
+
+`vercel.json` serves the `tube/` folder as a static site. The web build works as a PWA (Add to Home Screen) and uses Piped instances or demo mode.
+
+## Layout
+
+- `tube/` the app (static files, no build step except the engine bundle)
+- `src/engine-local.js` the on-device engine source, bundled to `tube/engine-local.js` with `npm run build`
+- `android/` Capacitor Android project, `capacitor.config.json`
+- `.github/workflows/android.yml` APK build
+- `engine/` optional yt-dlp server and its tests
 
 ## Features
 
-No ads (feed items flagged as ads are dropped, no ad streams are ever requested), SponsorBlock skipping with markers on the seek bar, Return YouTube Dislike counts, HD playback by syncing separate video and audio streams, quality and speed menus, captions, chapters, double tap to seek, picture in picture, audio only mode with lock screen controls, resume positions, watch history, watch later, liked videos, local subscriptions with an RSS based feed, NewPipe and YouTube Takeout subscription import, NewPipe format export, search suggestions, channel pages, comments, downloads, Shorts feed, queue and autoplay.
+No ads (ad flagged items are dropped, no ad streams requested), SponsorBlock with markers on the seek bar, Return YouTube Dislike counts, HD playback by syncing separate video and audio streams, quality and speed menus, captions, chapters, double tap to seek, fullscreen, picture in picture (browsers), audio only mode, resume positions, watch history, watch later, liked videos, local subscriptions with an RSS based feed, NewPipe and Takeout subscription import, NewPipe format export, search suggestions, channel pages, comments, Shorts, queue and autoplay. Glass effects have Auto/On/Off with an automatic frame-time governor.
 
-## Settings
+## Development
 
-You > Settings: engine, default quality, SponsorBlock, dislike counts, autoplay, appearance, glass effects (Auto/On/Off), subscription import and export, clear history.
+    npm ci
+    npm run build            # bundles the on-device engine
+    npx cap sync android     # copies the web app into the Android project
 
-Font: Inter, SIL OFL license, in `tube/fonts/`.
+Notes: the Android build needs JDK 21 and the Android SDK (CI has both). Third party YouTube clients can go against YouTube's terms of service. youtubei.js is MIT, Inter is OFL.

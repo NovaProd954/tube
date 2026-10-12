@@ -3,8 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0f0f0f" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" id="tc" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -14,7 +13,7 @@
 <link rel="icon" href="icon.svg">
 <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <title>Tube</title>
-<script>(function(){var r=document.documentElement,m=matchMedia('(prefers-color-scheme:dark)');window.setGlass=function(l){r.classList.toggle('glass-lite',l===1);r.classList.toggle('glass-off',l>=2)};var g=localStorage.getItem('glass')||'auto',l=+localStorage.getItem('glasslvl')||0,n=navigator;if(g==='off')l=2;else if(g==='on')l=0;else if(!l&&((n.deviceMemory&&n.deviceMemory<=2)||(n.hardwareConcurrency&&n.hardwareConcurrency<=2)||(n.connection&&n.connection.saveData)))l=1;setGlass(l);window.applyTheme=function(){var s=localStorage.getItem('theme')||'auto';r.dataset.theme=s==='dark'||(s==='auto'&&m.matches)?'dark':'light'};applyTheme();m.addEventListener('change',applyTheme);if(/preview/.test(location.search)||innerWidth>600)r.classList.add('frame')})()</script>
+<script>(function(){var r=document.documentElement,m=matchMedia('(prefers-color-scheme:dark)');window.setGlass=function(l){r.classList.toggle('glass-lite',l===1);r.classList.toggle('glass-off',l>=2)};var g=localStorage.getItem('glass')||'auto',l=+localStorage.getItem('glasslvl')||0,n=navigator;if(g==='off')l=2;else if(g==='on')l=0;else if(!l&&((n.deviceMemory&&n.deviceMemory<=2)||(n.hardwareConcurrency&&n.hardwareConcurrency<=2)||(n.connection&&n.connection.saveData)))l=1;setGlass(l);window.applyTheme=function(){var s=localStorage.getItem('theme')||'auto';r.dataset.theme=s==='dark'||(s==='auto'&&m.matches)?'dark':'light'};applyTheme();m.addEventListener('change',applyTheme);})()</script>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -63,7 +62,6 @@
 </defs></svg>
 
 <div id="app">
-<div class="sb"><span class="tm">9:41</span><i class="isl"></i><span class="st"><svg viewBox="0 0 18 12" style="width:18px;height:12px"><g fill="currentColor" stroke="none"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></g></svg><svg viewBox="0 0 26 12" style="width:26px;height:12px"><rect x=".5" y=".5" width="22" height="11" rx="3.5" opacity=".4" stroke-width="1"/><rect x="2" y="2" width="19" height="8" rx="2.2" fill="currentColor" stroke="none"/><path d="M24 4v4" opacity=".5" stroke-width="1.4"/></svg></span></div>
 
 <section class="view active" id="v-home">
 <header class="hd gl flat" id="hd-home"><div class="bar"><div class="logo"><svg viewBox="0 0 28 20" style="width:29px;height:20px"><rect width="28" height="20" rx="5.6" fill="#f00" stroke="none"/><path d="m11.4 5.8 6.4 4.2-6.4 4.2z" fill="#fff" stroke="none"/></svg><b>Tube</b></div><div class="ra"><button class="ib" data-act="toast" data-m="No cast devices found" aria-label="Cast"><svg><use href="#i-cast"/></svg></button><button class="ib" data-act="toast" data-m="No new notifications" aria-label="Notifications"><svg><use href="#i-bell"/></svg><i class="bdg">9+</i></button><button class="ib" data-act="srch" aria-label="Search"><svg><use href="#i-search"/></svg></button></div></div><div class="chips" id="chips"></div></header>
@@ -108,7 +106,7 @@
 <div class="sheet" id="sheet">
 <div class="vwrap" id="vwrap"><div class="vid" id="vid"><video id="vel" playsinline webkit-playsinline preload="auto"></video><i class="dtap l" id="dtl">-10s</i><i class="dtap r" id="dtr">+10s</i><div class="vui"><i class="vdim"></i><div class="vtop"><button class="gb gl" data-act="min" aria-label="Minimize"><svg><use href="#i-down"/></svg></button><div class="vt2"><button class="gb gl" data-act="pip" aria-label="Picture in picture"><svg><use href="#i-pip"/></svg></button><button class="gb gl" data-act="subsheet" aria-label="Captions"><svg><use href="#i-cc"/></svg></button><button class="gb gl" data-act="vset" aria-label="Player settings"><svg><use href="#i-set"/></svg></button></div></div>
 <div class="vmid"><button class="gb gl" data-act="vprev" aria-label="Previous"><svg><use href="#i-prev"/></svg></button><button class="gb pp gl" data-act="pp" data-pp aria-label="Play or pause"><svg><use href="#i-pause"/></svg></button><button class="gb gl" data-act="vnext" aria-label="Next"><svg><use href="#i-next"/></svg></button></div>
-<div class="vbot"><span id="vtime">0:00 / 0:00</span><button class="gb sm gl" data-act="toast" data-m="Fullscreen unavailable" aria-label="Fullscreen"><svg><use href="#i-full"/></svg></button><div class="trk" id="trk" data-act="seek"><i class="bar2"><i id="bufb" class="bufb"></i><i id="fill" class="fill"></i><i class="sbms" id="sbms"></i></i><i class="knob" id="knob"></i></div></div></div></div></div>
+<div class="vbot"><span id="vtime">0:00 / 0:00</span><button class="gb sm gl" data-act="fs" aria-label="Fullscreen"><svg><use href="#i-full"/></svg></button><div class="trk" id="trk" data-act="seek"><i class="bar2"><i id="bufb" class="bufb"></i><i id="fill" class="fill"></i><i class="sbms" id="sbms"></i></i><i class="knob" id="knob"></i></div></div></div></div></div>
 <div class="sbody" id="sbody">
 <div class="info"><h1 id="vti"></h1><p class="st2" id="vst"></p></div>
 <div class="chrow"><button class="chlink" data-act="vchopen"><div class="av" id="vav"></div><div class="chn"><b id="vch"></b><span id="vsubs"></span></div></button><button class="subb" id="subb" data-act="sub">Subscribe</button></div>

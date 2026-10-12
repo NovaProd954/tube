@@ -1,6 +1,6 @@
-# Tube Engine
+# Tube Engine (optional)
 
-A small local server that gives Tube real YouTube data without ads, accounts or Google APIs. It runs yt-dlp (the most actively maintained extractor) and answers with the same JSON shape as the Piped API, so Tube talks to it exactly like it talks to a Piped instance (which is NewPipe Extractor under the hood).
+A small yt-dlp powered server with a Piped compatible API. Tube does not need it: the Android app has its own on-device engine. Use it only if you want a separate engine, then set its URL in You > Settings > Engine.
 
 ## Run it
 

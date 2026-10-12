@@ -43,7 +43,7 @@ function renderYou(){$('#hist').innerHTML=Store.D.hist.slice(0,8).map(hc).join('
 $('#pls').innerHTML=[['Watch later','later','clock'],['Liked videos','liked','like']].map(([n,k,i])=>{const l=Store.D[k],f=l[0];return`<div class="pl" data-act="olist" data-l="${k}"><div class="th" ${f&&f.th?'':f&&f.n!=null?`style="background-image:${art({id:f.n,cat:f.cat},320,180)}"`:''}>${f&&f.th?`<img src="${esc(f.th)}" loading="lazy" referrerpolicy="no-referrer" alt="">`:''}<div class="pc">${ic(i)}<span>${l.length}</span></div></div><h3>${n}</h3><p>Private · Playlist</p></div>`}).join('');
 ['hist','later','liked'].forEach(k=>$('#n-'+k).textContent=Store.D[k].length||'');
 $('#set-q').textContent=Store.pref('q')+'p';
-const e=Engine.state();$('#set-eng').textContent=e.kind==='demo'?'Demo mode (no engine connected)':`${e.kind==='local'?'Tube Engine':e.kind==='piped'?'Piped (NewPipe Extractor)':'Custom'} · ${e.name} · ${e.ms} ms`;
+const e=Engine.state();$('#set-eng').textContent=e.kind==='demo'?'Demo mode (no engine connected)':e.kind==='native'?`On-device engine · ${e.ms} ms`:`${e.kind==='local'?'Tube Engine':e.kind==='piped'?'Piped (NewPipe Extractor)':'Custom'} · ${e.name} · ${e.ms} ms`;
 $$('[data-act=ptog]').forEach(b=>b.classList.toggle('on',!!Store.pref(b.dataset.k)))}
 let SF=[];
 const as=$('#as'),cs=$('#cs'),scrim=$('#scrim');
@@ -69,21 +69,22 @@ pgc.innerHTML=`<div class="chh">${ch.banner?`<div class="ban" style="background-
 function openList(k){const t={hist:'Watch history',later:'Watch later',liked:'Liked videos'}[k],l=Store.D[k];pageOpen(t,l.length?l.map(card).join(''):'<div class="empty">Nothing here yet</div>')}
 const q=$('#q'),sres=$('#sres'),srch=$('#srch');let sq=0,sTok=0;
 const SUG=['tiny language model','weather app tutorial','lo-fi focus music','japan coast walk','sourdough for beginners','night train alps','morning mobility flow','native app feel','strength basics','moon mission'];
-async function sugs(){const t=q.value.trim().toLowerCase(),tok=++sTok;$('.sf').classList.toggle('has',!!q.value);let l;
+let inRes=false;
+async function sugs(){if(inRes)return;const t=q.value.trim().toLowerCase(),tok=++sTok;$('.sf').classList.toggle('has',!!q.value);let l;
 if(!t)l=isDemo()?SUG.slice(0,7):[];
 else if(isDemo())l=[...new Set(SUG.concat(DEMO.map(v=>v.title.toLowerCase())).filter(s=>s.includes(t)))].slice(0,9);
 else{l=await Engine.suggest(q.value.trim());if(tok!==sTok)return}
 sres.innerHTML=l.map(s=>{const i=t?s.toLowerCase().indexOf(t):-1,tx=t&&i===0?esc(s.slice(0,t.length))+'<b>'+esc(s.slice(t.length))+'</b>':esc(s);return`<div class="sug" data-act="sugpick" data-s="${esc(s)}">${ic(t?'search':'clock')}<span>${tx}</span><button class="ib" data-act="sugfill" data-s="${esc(s)}" aria-label="Use suggestion">${ic('arrow')}</button></div>`}).join('')||(t?'':'<div class="empty">Search for videos and channels</div>')}
-async function results(term){q.value=term;q.blur();$('.sf').classList.add('has');const tok=++sTok;sres.innerHTML=skel(2);let r=[];
+async function results(term){clearTimeout(sq);inRes=true;q.value=term;q.blur();$('.sf').classList.add('has');const tok=++sTok;sres.innerHTML=skel(2);let r=[];
 try{if(isDemo()){const w=term.toLowerCase().split(/\s+/).filter(Boolean);r=DEMO.filter(v=>{const x=(v.title+' '+v.chn+' '+v.cat).toLowerCase();return w.every(y=>x.includes(y))})}else r=await Engine.search(term,'all')}catch{if(tok===sTok)sres.innerHTML=errBox('Search failed');return}
 if(tok!==sTok)return;r=r.filter(x=>x.type==='channel'||visible(x));
 sres.innerHTML=r.length?r.map(x=>x.type==='channel'?`<button class="chr" data-act="chopen" data-cid="${esc(x.id)}" data-n="${esc(x.name)}">${avh({chId:x.id,chn:x.name,av:x.av})}<div><b>${esc(x.name)}</b><span>${x.subs>=0&&x.subs!=null?esc(compact(x.subs))+' subscribers':'Channel'}</span></div></button>`:card(x)).join(''):`<div class="empty">No results for “${esc(term)}”</div>`;sres.scrollTop=0}
-function openS(){srch.classList.add('open');q.value='';sugs();setTimeout(()=>q.focus({preventScroll:true}),260)}
+function openS(){srch.classList.add('open');q.value='';inRes=false;sugs();setTimeout(()=>q.focus({preventScroll:true}),260)}
 const closeS=()=>{srch.classList.remove('open');q.blur()};
-q.addEventListener('input',()=>{clearTimeout(sq);sq=setTimeout(sugs,isDemo()?0:180)});
+q.addEventListener('input',()=>{inRes=false;clearTimeout(sq);sq=setTimeout(sugs,isDemo()?0:180)});
 q.addEventListener('keydown',e=>{if(e.key==='Enter'&&q.value.trim())results(q.value.trim())});
 const LI={home:0,shorts:1,subs:3,you:4};let cur='home',isOpen=false,shortsLoaded=false;
-const sbw=()=>app.classList.toggle('sbw',cur==='shorts'||isOpen);
+const sbw=()=>{const tc=D.querySelector('#tc');if(tc)tc.content=(cur==='shorts'||isOpen)?'#000000':(R.dataset.theme==='dark'?'#0f0f0f':'#ffffff')};
 function go(t){
 if(t===cur){const sc=$('#sc-'+t);sc&&sc.scrollTo({top:0,behavior:'smooth'});const h=$('#hd-'+t);h&&h.classList.remove('hide');return}
 $('#v-'+cur).classList.remove('active');$('#v-'+t).classList.add('active');cur=t;$('#lens').style.transform=`translateX(${LI[t]*100}%)`;$('#tabs').classList.remove('min');
@@ -136,7 +137,7 @@ try{const d=await Engine.video(v.id);if(tok!==P.tok)return;P.d=d;fillInfo(v,d);c
 if(Store.pref('sb')&&!d.live)Engine.sponsor(v.id).then(l=>{if(tok===P.tok){Player.setSb(l);drawSb(l,d.sec)}});
 if(Store.pref('ryd'))Engine.dislikes(v.id).then(r=>{if(r&&tok===P.tok){$('#dk').textContent=compact(r.dislikes);if(d.likes<0)$('#lk').textContent=compact(r.likes)}})}
 catch(e){if(tok===P.tok){$('#vtime').textContent='Unavailable';toast(Engine.state().kind==='piped'?'Could not load this video. Trying another instance may help.':'Could not load this video')}}}
-function minimize(){sheetEl.classList.remove('open');if(P.item)$('#mini').classList.add('show');isOpen=false;sbw();if(document.pictureInPictureElement==null&&P.item&&!Player.audioOnly()&&Player.mode()!=='sim'&&Player.playing()&&Store.pref('bg')===0)Player.pause()}
+function minimize(){sheetEl.classList.remove('open');if(P.item)$('#mini').classList.add('show');isOpen=false;sbw();}
 function closeP(){Player.stop();P.item=null;P.d=null;$('#mini').classList.remove('show');sheetEl.classList.remove('open');isOpen=false;sbw()}
 function next(){const n=queue.shift();if(n)return openP(n);if(!Store.pref('auto'))return;const r=P.rel.filter(x=>x.id!==(P.item&&P.item.id)&&visible(x))[0]||(isDemo()?DEMO[(DEMO.findIndex(x=>x.id===P.item.id)+1)%DEMO.length]:null);if(r)openP(r)}
 const vw=$('#vwrap');let sy=null,dy=0,lastTap=0,lastX=0;
@@ -187,6 +188,7 @@ case 'mpp':if(P.item)Player.toggle();break;
 case 'mopen':if(P.item)openP(P.item,true);break;
 case 'mclose':closeP();break;
 case 'seek':{const r=t.getBoundingClientRect();Player.seek(Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*(Player.dur()||0));showUI();break}
+case 'fs':{const w=$('#vwrap'),v=Player.video;if(D.fullscreenElement){D.exitFullscreen();break}if(w.requestFullscreen)w.requestFullscreen().catch(()=>toast('Fullscreen is not available'));else if(v.webkitEnterFullscreen)v.webkitEnterFullscreen();else toast('Fullscreen is not available');break}
 case 'pip':Player.pip().then(ok=>{if(!ok)toast('Picture in picture is not supported here')});break;
 case 'vset':vset();break;
 case 'subsheet':subSheet();break;
@@ -199,7 +201,7 @@ case 'ccl':closeSheets();break;
 case 'engsheet':engSheet();break;
 case 'qsheet':qPrefSheet();break;
 case 'ptog':{const k=d.k,on=!Store.pref(k);Store.pref(k,on?1:0);t.classList.toggle('on',on);break}
-case 'seg':localStorage.setItem('theme',d.v);applyTheme();$$('#seg button').forEach(b=>b.classList.toggle('on',b===t));break;
+case 'seg':localStorage.setItem('theme',d.v);applyTheme();sbw();$$('#seg button').forEach(b=>b.classList.toggle('on',b===t));break;
 case 'gseg':applyGlassMode(d.v,t);break;
 case 'impsubs':$('#imp').click();break;
 case 'expsubs':{const b=new Blob([Store.exportSubs()],{type:'application/json'}),a=D.createElement('a');a.href=URL.createObjectURL(b);a.download='tube-subscriptions.json';D.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);break}
@@ -220,6 +222,7 @@ bind($('#sc-home'),$('#hd-home'));bind($('#sc-subs'),$('#hd-subs'));bind($('#sc-
 $$('#gseg button').forEach(b=>b.classList.toggle('on',b.dataset.v===gm));
 const th=LS.getItem('theme')||'auto';$$('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.v===th));
 (async()=>{drawChips();feed.innerHTML=skel(3);const s=await Engine.init();seedDemo();toast(s.kind==='demo'?'Engine not reachable. Showing demo content.':'Connected to '+s.name);loadHome();renderSubs();renderYou()})();
-if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js');
+if(Engine.native()){const App=window.Capacitor.Plugins&&window.Capacitor.Plugins.App;App&&App.addListener&&App.addListener('backButton',()=>{if(as.classList.contains('open')||cs.classList.contains('open'))return closeSheets();if(D.fullscreenElement)return D.exitFullscreen();if(srch.classList.contains('open'))return closeS();if(pg.classList.contains('open'))return pg.classList.remove('open');if(isOpen)return minimize();if(cur!=='home')return go('home');App.exitApp()})}
+else if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js');
 window.__tube={go,openP:id=>openP(ITEMS.get(id)),minimize,openS,results,sheet,closeSheets,itemMenu:id=>itemMenu(ITEMS.get(id)),openChannel,openList,vset,qualSheet,subSheet,engSheet,speedSheet,toast,P,Store,getLvl:()=>lvl,cs:()=>{cs.classList.add('open');scrim.classList.add('show');loadComments(P.item)},openComments:id=>{cs.classList.add('open');scrim.classList.add('show');loadComments(ITEMS.get(id)||P.item)},ITEMS,loadHome,renderSubs};
 })();

@@ -11,22 +11,26 @@ safeUrl:u=>{if(!u)return'';try{const x=new URL(u,location.href);return/^https?:$
 const Engine=(()=>{
 const LS=localStorage,cache=new Map(),TO=ms=>AbortSignal.timeout?AbortSignal.timeout(ms):undefined;
 const SBC=['sponsor','selfpromo','interaction'];
-let st={kind:'demo',base:'',name:'Demo mode',ms:0},pool=[];
+let st={kind:'demo',base:'',name:'Demo mode',ms:0},pool=[],TL=null;
+const isNative=()=>{const c=window.Capacitor;return!!(c&&c.isNativePlatform&&c.isNativePlatform())};
+const loadScript=src=>new Promise((res,rej)=>{if(window.TubeLocal)return res();const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('engine script'));document.head.appendChild(s)});
 const abs=u=>!u?u:u.startsWith('/')?st.base+u:u;
 async function probe(base,t=4000){const t0=performance.now();try{const r=await fetch(base+'/healthcheck',{signal:TO(t)});if(!r.ok)return null;const x=await r.text();let j=null;try{j=JSON.parse(x)}catch{}return{base,kind:j&&j.engine==='tube-engine'?'local':'piped',name:new URL(base).host,ms:Math.round(performance.now()-t0)}}catch{return null}}
 async function instances(){try{const r=await fetch('https://piped-instances.kavin.rocks/',{signal:TO(5000)});const j=await r.json();return j.filter(x=>x.api_url).sort((a,b)=>(b.uptime_24h||0)-(a.uptime_24h||0)).map(x=>x.api_url.replace(/\/$/,'')).slice(0,8)}catch{return['https://pipedapi.kavin.rocks']}}
 const set=p=>{st=p?{kind:p.kind,base:p.base,name:p.name,ms:p.ms}:{kind:'demo',base:'',name:'Demo mode',ms:0};return st};
+async function initNative(){const t0=performance.now();try{await loadScript('engine-local.js');if(!window.TubeLocal||!TubeLocal.native())return null;await TubeLocal.init();TL=TubeLocal;return{kind:'native',base:'',name:'On-device engine',ms:Math.round(performance.now()-t0)}}catch(e){TL=null;return null}}
 async function init(){
 const mode=LS.getItem('eng')||'auto',url=(LS.getItem('engUrl')||'').replace(/\/$/,'');
-if(mode==='demo')return set(null);
+TL=null;if(mode==='demo')return set(null);
 if(mode==='custom'&&url){const p=await probe(url);return set(p&&{...p,kind:p.kind==='local'?'local':'custom'})}
-let p=await probe('http://127.0.0.1:8787',1200);if(p)return set(p);
-pool=await instances();for(const b of pool){p=await probe(b,4000);if(p)return set(p)}
+if(isNative()){const n=await initNative();if(n)return set(n)}
+let p=null;pool=await instances();for(const b of pool){p=await probe(b,4000);if(p)return set(p)}
 return set(null)}
 async function rotate(){if(st.kind!=='piped'||!pool.length)return false;const i=pool.indexOf(st.base);for(let k=1;k<pool.length;k++){const b=pool[(i+k)%pool.length],p=await probe(b,3500);if(p){set(p);return true}}return false}
 async function req(path,o={}){
 if(st.kind==='demo')throw new Error('demo');
 const c=cache.get(path);if(c&&Date.now()-c.t<(o.ttl||60000))return c.v;
+if(st.kind==='native'){const v=await Promise.race([TL.handle(path),new Promise((_,j)=>setTimeout(()=>j(new Error('timeout')),o.timeout||30000))]);cache.set(path,{t:Date.now(),v});if(cache.size>200)cache.delete(cache.keys().next().value);return v}
 let err;for(let i=0;i<3;i++){try{const r=await fetch(st.base+path,{signal:TO(o.timeout||20000)});if(!r.ok)throw new Error('HTTP '+r.status);const v=await r.json();if(v&&v.error)throw new Error(v.error);cache.set(path,{t:Date.now(),v});if(cache.size>200)cache.delete(cache.keys().next().value);return v}catch(e){err=e;if(!(await rotate()))break}}
 throw err}
 function nv(it){if(!it||(it.type&&it.type!=='stream')||it.isAd||it.ad)return null;const id=U.vid(it.url);if(!id)return null;const live=it.duration===-1||!!it.livestream,sec=Math.max(0,it.duration||0);
@@ -49,5 +53,5 @@ subs_:(j.subtitles||[]).filter(s=>s.url).map(s=>({url:abs(s.url),name:s.name||s.
 async function hash(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
 async function sponsor(id){try{const h=(await hash(id)).slice(0,4),r=await fetch(`https://sponsor.ajay.app/api/skipSegments/${h}?categories=${encodeURIComponent(JSON.stringify(SBC))}&actionTypes=${encodeURIComponent('["skip"]')}`,{signal:TO(6000)});if(!r.ok)return[];const e=(await r.json()).find(x=>x.videoID===id);return e?e.segments.filter(s=>s.actionType==='skip').map(s=>({c:s.category,a:s.segment[0],b:s.segment[1]})):[]}catch{return[]}}
 async function dislikes(id){try{const r=await fetch('https://returnyoutubedislikeapi.com/votes?videoId='+id,{signal:TO(5000)});if(!r.ok)return null;const j=await r.json();return{likes:j.likes,dislikes:j.dislikes}}catch{return null}}
-return{init,state:()=>st,video,home,search,suggest,feed,channel,comments,sponsor,dislikes,abs,pstream,nv,probe,set:(m,u)=>{LS.setItem('eng',m);if(u!=null)LS.setItem('engUrl',u)},clear:()=>cache.clear()}
+return{init,state:()=>st,native:isNative,video,home,search,suggest,feed,channel,comments,sponsor,dislikes,abs,pstream,nv,probe,set:(m,u)=>{LS.setItem('eng',m);if(u!=null)LS.setItem('engUrl',u)},clear:()=>cache.clear()}
 })();
