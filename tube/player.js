@@ -50,6 +50,7 @@ function ms(){if(!('mediaSession' in navigator)||!D)return;try{navigator.mediaSe
 function ms2(t,d){if(!('mediaSession' in navigator)||!navigator.mediaSession.setPositionState||!d)return;try{navigator.mediaSession.setPositionState({duration:d,position:Math.min(t,d),playbackRate:rate})}catch{}}
 function vtt(x){const o=[],ts=s=>s.split(':').reduce((p,c)=>p*60+parseFloat(c),0);x.replace(/\r/g,'').split(/\n\n+/).forEach(b=>{const l=b.split('\n'),i=l.findIndex(z=>z.includes('-->'));if(i<0)return;const m=l[i].match(/([\d:.]+)\s*-->\s*([\d:.]+)/);if(!m)return;const tx=l.slice(i+1).join('\n').replace(/<[^>]+>/g,'').trim();if(tx)o.push([ts(m[1]),ts(m[2]),tx])});return o}
 const api={
+canPlay:s=>can(mm(s)),
 on:(n,f)=>{cb[n]=f},
 load(d,o={}){
 clearInterval(simIv);D=d;sb=[];tracks={};subOn=-1;ei=0;lastSave=0;

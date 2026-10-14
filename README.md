@@ -12,6 +12,14 @@ Tube picks its engine by itself, in this order:
 
 `engine/` is an optional yt-dlp server for advanced setups (custom server URL in You > Settings > Engine). It is not needed.
 
+## Background play
+
+In the Android app, playback continues with the screen off or the app in the background. A native foreground service shows a media notification with play, pause, next and previous, and the lock screen and headset controls work. When you leave the app Tube switches to the audio stream automatically and switches back to video when you return. Turn it off in You > Settings > Background play.
+
+## Diagnostics
+
+You > Settings > Engine > Run diagnostics tests the network, the on-device engine, a sample video and the stream request, and gives you a report to copy if something does not play.
+
 ## Get the Android app
 
 Every push to `main` builds a debug APK with GitHub Actions. Open the repo's Releases page, download `Tube.apk` from the `apk-latest` release and install it. Or run the "Build Android APK" workflow manually.

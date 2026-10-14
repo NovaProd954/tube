@@ -22,8 +22,18 @@ jobs:
       - run: npm ci
       - run: npm run sync
       - run: chmod +x android/gradlew
-      - run: ./gradlew assembleDebug --no-daemon
+      - name: Build debug APK
+        shell: bash
+        run: ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee ../build.log
         working-directory: android
+      - name: Save build log to ci-log branch
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p /tmp/lg && (cp build.log /tmp/lg/build.log 2>/dev/null || echo "no build log" > /tmp/lg/build.log)
+          cd /tmp/lg && git init -q -b ci-log && git config user.name github-actions && git config user.email actions@github.com
+          git add -A && git commit -qm "build log ${GITHUB_SHA::7}" && git push -qf "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" ci-log
       - uses: actions/upload-artifact@v4
         with:
           name: tube-apk

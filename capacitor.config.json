@@ -1,1 +1,24 @@
-{"appId":"app.novaprod.tube","appName":"Tube","webDir":"tube","server":{"androidScheme":"https"},"android":{"allowMixedContent":false},"plugins":{"CapacitorHttp":{"enabled":false}}}
+{
+  "appId": "app.novaprod.tube",
+  "appName": "Tube",
+  "webDir": "tube",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": false,
+    "overrideUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 15_7_3) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Safari/605.1.15",
+    "webContentsDebuggingEnabled": true,
+    "backgroundColor": "#0f0f0f"
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": false
+    },
+    "SystemBars": {
+      "insetsHandling": "css",
+      "initialViewportFitValueHint": "cover",
+      "style": "DEFAULT"
+    }
+  }
+}

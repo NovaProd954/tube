@@ -18,7 +18,8 @@ const abs=u=>!u?u:u.startsWith('/')?st.base+u:u;
 async function probe(base,t=4000){const t0=performance.now();try{const r=await fetch(base+'/healthcheck',{signal:TO(t)});if(!r.ok)return null;const x=await r.text();let j=null;try{j=JSON.parse(x)}catch{}return{base,kind:j&&j.engine==='tube-engine'?'local':'piped',name:new URL(base).host,ms:Math.round(performance.now()-t0)}}catch{return null}}
 async function instances(){try{const r=await fetch('https://piped-instances.kavin.rocks/',{signal:TO(5000)});const j=await r.json();return j.filter(x=>x.api_url).sort((a,b)=>(b.uptime_24h||0)-(a.uptime_24h||0)).map(x=>x.api_url.replace(/\/$/,'')).slice(0,8)}catch{return['https://pipedapi.kavin.rocks']}}
 const set=p=>{st=p?{kind:p.kind,base:p.base,name:p.name,ms:p.ms}:{kind:'demo',base:'',name:'Demo mode',ms:0};return st};
-async function initNative(){const t0=performance.now();try{await loadScript('engine-local.js');if(!window.TubeLocal||!TubeLocal.native())return null;await TubeLocal.init();TL=TubeLocal;return{kind:'native',base:'',name:'On-device engine',ms:Math.round(performance.now()-t0)}}catch(e){TL=null;return null}}
+let lastErr='';
+async function initNative(){const t0=performance.now();lastErr='';try{await loadScript('engine-local.js');if(!window.TubeLocal||!TubeLocal.native())return null;await TubeLocal.init();TL=TubeLocal;return{kind:'native',base:'',name:'On-device engine',ms:Math.round(performance.now()-t0)}}catch(e){TL=null;lastErr=String((e&&e.message)||e).slice(0,160);return null}}
 async function init(){
 const mode=LS.getItem('eng')||'auto',url=(LS.getItem('engUrl')||'').replace(/\/$/,'');
 TL=null;if(mode==='demo')return set(null);
@@ -53,5 +54,6 @@ subs_:(j.subtitles||[]).filter(s=>s.url).map(s=>({url:abs(s.url),name:s.name||s.
 async function hash(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
 async function sponsor(id){try{const h=(await hash(id)).slice(0,4),r=await fetch(`https://sponsor.ajay.app/api/skipSegments/${h}?categories=${encodeURIComponent(JSON.stringify(SBC))}&actionTypes=${encodeURIComponent('["skip"]')}`,{signal:TO(6000)});if(!r.ok)return[];const e=(await r.json()).find(x=>x.videoID===id);return e?e.segments.filter(s=>s.actionType==='skip').map(s=>({c:s.category,a:s.segment[0],b:s.segment[1]})):[]}catch{return[]}}
 async function dislikes(id){try{const r=await fetch('https://returnyoutubedislikeapi.com/votes?videoId='+id,{signal:TO(5000)});if(!r.ok)return null;const j=await r.json();return{likes:j.likes,dislikes:j.dislikes}}catch{return null}}
-return{init,state:()=>st,native:isNative,video,home,search,suggest,feed,channel,comments,sponsor,dislikes,abs,pstream,nv,probe,set:(m,u)=>{LS.setItem('eng',m);if(u!=null)LS.setItem('engUrl',u)},clear:()=>cache.clear()}
+async function diagnose(log){if(isNative()){try{await loadScript('engine-local.js');return await TubeLocal.diagnose(log)}catch(e){log('FAIL could not load engine: '+((e&&e.message)||e))}return}log('Not running inside the Android app: '+st.kind+' engine, '+st.name);log('The on-device engine only exists in the Android app.')}
+return{init,state:()=>st,native:isNative,diagnose,lastErr:()=>lastErr,video,home,search,suggest,feed,channel,comments,sponsor,dislikes,abs,pstream,nv,probe,set:(m,u)=>{LS.setItem('eng',m);if(u!=null)LS.setItem('engUrl',u)},clear:()=>cache.clear()}
 })();

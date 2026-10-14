@@ -1,4 +1,4 @@
-import {Innertube,UniversalCache} from 'youtubei.js/web';
+import {Innertube,UniversalCache,Constants} from 'youtubei.js/web';
 const str=t=>t==null?'':typeof t==='string'?t:String(t.text!==undefined?t.text:t),ID=/^[\w-]{11}$/,UC=/^UC[\w-]{22}$/;
 const count=s=>{const m=String(s||'').replace(/,/g,'').match(/([\d.]+)\s*([KMB])?/i);if(!m)return -1;const n=parseFloat(m[1]),u=(m[2]||'').toUpperCase();return Math.round(n*(u==='K'?1e3:u==='M'?1e6:u==='B'?1e9:1))};
 const dur=s=>{const p=String(s||'').split(':').map(Number);if(!p.length||p.some(isNaN))return 0;return p.reduce((a,b)=>a*60+b,0)};
@@ -48,7 +48,7 @@ const caps=((i.captions&&i.captions.caption_tracks)||[]).map(t=>({url:https(t.ba
 const rel=[];for(const n of(i.watch_next_feed||[])){const x=item(n);if(x)rel.push(x)}
 const cid=(b.channel&&b.channel.id)||b.channel_id||'';
 return{title:b.title||'',description:b.short_description||'',uploadDate:isNaN(pd)?'':new Date(pd).toISOString().slice(0,10),uploaded:isNaN(pd)?-1:pd,uploader:(b.channel&&b.channel.name)||b.author||'',uploaderUrl:cid?'/channel/'+cid:'',uploaderAvatar:https(oa.best_thumbnail&&oa.best_thumbnail.url)||null,uploaderSubscriberCount:count(str(own.subscriber_count)),uploaderVerified:!!oa.is_verified,thumbnailUrl:https(b.thumbnail&&b.thumbnail[0]&&b.thumbnail[0].url)||`https://i.ytimg.com/vi/${id}/mqdefault.jpg`,hls:(b.is_live||b.is_live_content)&&i.streaming_data&&i.streaming_data.hls_manifest_url||null,dash:null,livestream:!!b.is_live,duration:b.is_live?-1:b.duration||0,views:b.view_count==null?-1:b.view_count,likes:b.like_count==null?-1:b.like_count,dislikes:-1,category:b.category||'',tags:(b.tags||b.keywords||[]).slice(0,12),chapters:[],audioStreams:st.au,videoStreams:st.vs,subtitles:caps,relatedStreams:rel,proxyUrl:'',client:c}}
-async function search(q,filter){const y=await boot(),r=await y.search(q,{type:filter==='channels'?'channel':filter==='videos'?'video':'all'});const items=feedItems(r);if(filter!=='videos'){for(const c of(r.channels||[])){const x=channelItem(c);if(x)items.unshift(x)}}return{items,nextpage:null,suggestion:null,corrected:false}}
+async function search(q,filter){const y=await boot();if(filter==='shorts'){const r=await y.search(q+' shorts',{type:'video',duration:'short'});return{items:feedItems(r).filter(x=>x.duration>0&&x.duration<=60),nextpage:null,suggestion:null,corrected:false}}const r=await y.search(q,{type:filter==='channels'?'channel':filter==='videos'?'video':'all'});const items=feedItems(r);if(filter!=='videos'){for(const c of(r.channels||[])){const x=channelItem(c);if(x)items.unshift(x)}}return{items,nextpage:null,suggestion:null,corrected:false}}
 async function home(){const y=await boot();let l=[];try{l=feedItems(await y.getHomeFeed())}catch{}if(l.length<6){try{l=feedItems(await y.search('trending now',{type:'video'}))}catch{}}return l}
 async function suggest(q){const y=await boot();return(await y.getSearchSuggestions(q)).slice(0,10)}
 async function comments(id){const y=await boot(),c=await y.getComments(id,'TOP_COMMENTS'),out=[];
@@ -84,3 +84,23 @@ return new Response([204,205,304].includes(r.status)?null:body,{status:r.status,
 export const native=()=>{const c=globalThis.Capacitor;return!!(c&&c.isNativePlatform&&c.isNativePlatform()&&c.Plugins&&c.Plugins.CapacitorHttp)};
 export async function init(){setFetch(nativeFetch);await boot();return true}
 export const _t={item,channelItem,feedItems,count,dur,mime};
+
+export const clientUA=c=>(Constants&&Constants.CLIENTS&&Constants.CLIENTS[c]&&Constants.CLIENTS[c].USER_AGENT)||'';
+export async function diagnose(log){
+const L=x=>log&&log(x),cap=globalThis.Capacitor,t0=performance.now();
+L('WebView UA: '+navigator.userAgent);
+L('Capacitor: '+(cap&&cap.getPlatform?cap.getPlatform():'none')+', native='+native());
+const ua=clientUA('VISIONOS');L('UA matches VISIONOS client: '+(navigator.userAgent===ua?'yes':'NO'));
+const T=async(name,fn)=>{const a=performance.now();try{const r=await fn();L('OK   '+name+' ('+Math.round(performance.now()-a)+' ms)'+(r?' - '+r:''));return true}catch(e){L('FAIL '+name+': '+String((e&&e.message)||e).slice(0,160));return false}};
+if(!await T('network via native HTTP',async()=>{const r=await nativeFetch('https://www.youtube.com/generate_204');return 'HTTP '+r.status}))return;
+if(!await T('engine start',async()=>{await init()}))return;
+await T('search',async()=>{const r=await search('music','videos');return r.items.length+' results'});
+await T('home feed',async()=>{const r=await home();return r.length+' items'});
+let v=null;
+await T('player info (jNQXAC9IJRE)',async()=>{v=await video('jNQXAC9IJRE');return 'client '+v.client+', '+v.videoStreams.length+' video, '+v.audioStreams.length+' audio streams, '+v.subtitles.length+' captions'});
+if(v){const s=v.videoStreams.find(x=>!x.videoOnly)||v.videoStreams[0]||v.audioStreams[0];
+if(s){L('stream: '+s.mimeType+' '+s.codec+' '+(s.quality||''));
+await T('stream request via native HTTP',async()=>{const r=await nativeFetch(s.url,{headers:{range:'bytes=0-1023','user-agent':clientUA(v.client)||navigator.userAgent}});return 'HTTP '+r.status});
+await T('stream request via WebView <video>',()=>new Promise((res,rej)=>{const e=document.createElement('video');e.muted=true;e.preload='metadata';const to=setTimeout(()=>{e.removeAttribute('src');e.load();rej(new Error('timeout after 12 s'))},12000);e.onloadedmetadata=()=>{clearTimeout(to);res('loaded, '+Math.round(e.duration)+' s, '+e.videoWidth+'x'+e.videoHeight);e.removeAttribute('src');e.load()};e.onerror=()=>{clearTimeout(to);rej(new Error('media error code '+(e.error&&e.error.code)+(e.error&&e.error.message?' '+e.error.message:'')))};e.src=s.url}))}
+else L('FAIL no streams returned')}
+L('done in '+Math.round((performance.now()-t0)/1000)+' s')}

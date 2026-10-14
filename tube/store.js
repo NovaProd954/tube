@@ -1,6 +1,6 @@
 const Store=(()=>{
 const g=(k,d)=>{try{const v=JSON.parse(localStorage.getItem('t.'+k));return v==null?d:v}catch{return d}},s=(k,v)=>{try{localStorage.setItem('t.'+k,JSON.stringify(v))}catch{}};
-const D={subs:g('subs',{}),hist:g('hist',[]),later:g('later',[]),liked:g('liked',[]),prog:g('prog',{}),hide:g('hide',[]),pref:Object.assign({q:720,sb:1,ryd:1,auto:1},g('pref',{}))};
+const D={subs:g('subs',{}),hist:g('hist',[]),later:g('later',[]),liked:g('liked',[]),prog:g('prog',{}),hide:g('hide',[]),pref:Object.assign({q:720,sb:1,ryd:1,auto:1,bg:1},g('pref',{}))};
 const slim=v=>({id:v.id,title:v.title,chn:v.chn,chId:v.chId,av:v.av||null,vw:v.vw||'',age:v.age||'',dur:v.dur||'',sec:v.sec||0,th:v.th||null,live:!!v.live,short:!!v.short,n:v.n,cat:v.cat});
 function save(k){s(k,D[k])}
 const api={
