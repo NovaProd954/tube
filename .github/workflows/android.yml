@@ -32,6 +32,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p /tmp/lg && (cp build.log /tmp/lg/build.log 2>/dev/null || echo "no build log" > /tmp/lg/build.log)
+          echo '{"git":{"deploymentEnabled":false}}' > /tmp/lg/vercel.json
           cd /tmp/lg && git init -q -b ci-log && git config user.name github-actions && git config user.email actions@github.com
           git add -A && git commit -qm "build log ${GITHUB_SHA::7}" && git push -qf "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" ci-log
       - uses: actions/upload-artifact@v4
