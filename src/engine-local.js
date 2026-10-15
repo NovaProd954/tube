@@ -30,9 +30,9 @@ export function setFetch(f){fetchFn=f}
 async function boot(){if(yt)return yt;if(!booting)booting=Innertube.create({fetch:fetchFn||undefined,retrieve_player:false,cache:new UniversalCache(false),lang:'en',location:'US'}).then(x=>(yt=x)).catch(e=>{booting=null;throw e});return booting}
 async function full(){if(ytFull)return ytFull;ytFull=await Innertube.create({fetch:fetchFn||undefined,retrieve_player:true,cache:new UniversalCache(false),lang:'en',location:'US'});return ytFull}
 const CLIENTS=['VISIONOS','IOS','ANDROID_VR','TV','WEB'];
-async function info(id){let err;
-for(const c of CLIENTS){try{const y=(c==='TV'||c==='WEB')?await full():await boot();const i=await y.getInfo(id,{client:c});const s=i.streaming_data;if(s&&((s.formats&&s.formats.length)||(s.adaptive_formats&&s.adaptive_formats.length)||s.hls_manifest_url))return{i,y,c};err=new Error((i.playability_status&&i.playability_status.reason)||'No streams from '+c)}catch(e){err=e}}
-throw err||new Error('No playable streams')}
+async function info(id){const errs=[];
+for(const c of CLIENTS){try{const y=(c==='TV'||c==='WEB')?await full():await boot();const i=await y.getInfo(id,{client:c});const s=i.streaming_data;if(s&&((s.formats&&s.formats.length)||(s.adaptive_formats&&s.adaptive_formats.length)||s.hls_manifest_url))return{i,y,c};errs.push(c+': '+((i.playability_status&&i.playability_status.reason)||'no streams'))}catch(e){errs.push(c+': '+String((e&&e.message)||e))}}
+throw new Error(errs.join(' | ')||'No playable streams')}
 const mime=m=>{const x=String(m||'').match(/^([^;]+)(?:;\s*codecs="?([^"]*)"?)?/);return{m:(x&&x[1]||'').trim(),c:(x&&x[2]||'').split(',')[0].trim()}};
 async function furl(f,y){if(f.url&&!f.signature_cipher&&!f.cipher)return f.url;try{return await f.decipher(y.session.player)}catch{return f.url||''}}
 async function streams(i,y){const s=i.streaming_data||{},vs=[],au=[];
@@ -73,7 +73,7 @@ if(p==='/feed/unauthenticated')return feed((q.get('channels')||'').split(','));
 throw new Error('Unknown route '+p)}
 export async function nativeFetch(input,init){
 const cap=globalThis.Capacitor,http=cap&&cap.Plugins&&cap.Plugins.CapacitorHttp;if(!http)return fetch(input,init);
-init=init||{};const url=typeof input==='string'?input:input.url,method=(init.method||(typeof input!=='string'&&input.method)||'GET').toUpperCase(),h={};
+init=init||{};const url=typeof input==='string'?input:String((input&&input.url)||input),method=(init.method||(typeof input!=='string'&&input.method)||'GET').toUpperCase(),h={};
 const H=init.headers||(typeof input!=='string'?input.headers:null);if(H)new Headers(H).forEach((v,k)=>{h[k]=v});
 if(/youtube\.com|googleapis\.com/.test(url)&&!h.cookie)h.cookie='SOCS=CAI; CONSENT=YES+';
 let data=init.body;if(data!=null&&typeof data!=='string')data=await new Response(data).text();
@@ -91,7 +91,7 @@ const L=x=>log&&log(x),cap=globalThis.Capacitor,t0=performance.now();
 L('WebView UA: '+navigator.userAgent);
 L('Capacitor: '+(cap&&cap.getPlatform?cap.getPlatform():'none')+', native='+native());
 const ua=clientUA('VISIONOS');L('UA matches VISIONOS client: '+(navigator.userAgent===ua?'yes':'NO'));
-const T=async(name,fn)=>{const a=performance.now();try{const r=await fn();L('OK   '+name+' ('+Math.round(performance.now()-a)+' ms)'+(r?' - '+r:''));return true}catch(e){L('FAIL '+name+': '+String((e&&e.message)||e).slice(0,160));return false}};
+const T=async(name,fn)=>{const a=performance.now();try{const r=await fn();L('OK   '+name+' ('+Math.round(performance.now()-a)+' ms)'+(r?' - '+r:''));return true}catch(e){L('FAIL '+name+': '+String((e&&e.message)||e).slice(0,500));return false}};
 if(!await T('network via native HTTP',async()=>{const r=await nativeFetch('https://www.youtube.com/generate_204');return 'HTTP '+r.status}))return;
 if(!await T('engine start',async()=>{await init()}))return;
 await T('search',async()=>{const r=await search('music','videos');return r.items.length+' results'});
